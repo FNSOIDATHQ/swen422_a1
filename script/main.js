@@ -2,7 +2,8 @@
 
 CSVreader("/dataset/section1.csv").then(function (data) {
     //parser
-    var dataFoS=[];
+    var dataFoS = [];
+    var dataTotal=[];
     var dataNumOnly = JSON.parse(JSON.stringify(data));
     for (var i in data) {
         for (var j in data[i]) {
@@ -17,11 +18,11 @@ CSVreader("/dataset/section1.csv").then(function (data) {
                 }
             }
             else {
-                if(j == "Field of study (Broad)"&&data[i][j]!=""&&data[i][j]!="Total"){
+                if (j == "Field of study (Broad)" && data[i][j] != "" && data[i][j] != "Total") {
                     console.log("find a field")
-                    dataFoS.push(data[i][j].substring(0,data[i][j].length-7))
+                    dataFoS.push(data[i][j].substring(0, data[i][j].length - 7))
                 }
-                
+
                 delete dataNumOnly[i][j]
             }
         }
@@ -36,6 +37,7 @@ CSVreader("/dataset/section1.csv").then(function (data) {
         if (data[i]["Field of study (Broad)"] && data[i]["Field of study (Broad)"] != "Total") {
             dataNumOnly[i] = d3.entries(dataNumOnly[i])
             var precent = data[i]["Total"] / 385050 * 12;
+            dataTotal.push(data[i]["Total"]);
             for (var j in dataNumOnly[i]) {
                 dataNumOnly[i][j].radius = precent * baseRadius + 20
             }
@@ -49,7 +51,7 @@ CSVreader("/dataset/section1.csv").then(function (data) {
     dataNumOnly = dataNumOnly.filter((item) => {
         return item !== null && typeof item !== "undefined" && item !== "";
     });
-    console.log(dataFoS);
+    console.log(dataTotal);
     // console.log(dataNumOnly);
 
 
@@ -88,7 +90,8 @@ CSVreader("/dataset/section1.csv").then(function (data) {
         .call(force.drag);
 
     mainColor = randomColorSequential();
-    node.selectAll("path")
+
+    var donuts = node.selectAll("path")
         .data(function (d, i) {
             // console.log("set data")
             return pie(d);
@@ -108,19 +111,37 @@ CSVreader("/dataset/section1.csv").then(function (data) {
         })
         .attr("stroke", "#f0efef")
         .style("stroke-width", "0.5px")
+        .attr('opacity', '1')
         ;
 
-        node.append("text")
-        .text(function (d,i) {
+    node.append("text")
+        .text(function (d, i) {
             return dataFoS[i];
         })
         .attr("text-anchor", "middle")
-        .style("font-size", function (d,i) {
-            return (1/dataFoS[i].length*70)+Math.sqrt(dataNumOnly[i][0].radius)*0.5;
+        .style("font-size", function (d, i) {
+            return (1 / dataFoS[i].length * 70) + Math.sqrt(dataNumOnly[i][0].radius) * 0.5;
         })
-        
+        .attr("stroke", "#000000")
+        .style("stroke-width", "0.2px")
 
-    // node.selectAll("label")
+    node.append("tspan")
+
+    node.append("text")
+        .text(function (d, i) {
+            return dataTotal[i];
+        })
+        .attr("text-anchor", "middle")
+        .style("font-size", function (d, i) {
+            return Math.sqrt(dataNumOnly[i][0].radius) * 1.25;
+        })
+        .attr("stroke", "#000000")
+        .style("stroke-width", "0.2px")
+        .attr('transform', function (d,i) {
+            return "translate(0," + (Math.sqrt(dataNumOnly[i][0].radius)*1.75) + ")";
+        })
+
+    // var labels = node.selectAll("label")
     //     .data(function (d, i) {
     //         // console.log("set data")
     //         return pie(d);
@@ -134,9 +155,57 @@ CSVreader("/dataset/section1.csv").then(function (data) {
     //     .attr("transform", function (d) {
     //         return "translate(" + arc.centroid(d) + ")";
     //     })
-
     //     .attr("text-anchor", "middle")
     //     .style("font-size", 17)
+    //     .attr('opacity', '0')
+    //     .style("user-select", "none")
+
+    donuts
+        .on("mouseover", function (d, i) {
+            var donut = d3.select(this);
+            donut.transition()
+                .duration('50')
+                .attr('opacity', '0.5')
+            svg
+                // d3.select(this.parentNode)
+                .append("text")
+                // .attr('id', 'tempText')
+                .attr('class', 'tempText')
+                .text(d.data.key)
+                .attr('transform', function (d) {
+                    return "translate(" + (d3.mouse(this)[0] - 100) + "," + (d3.mouse(this)[1] + 20) + ")";
+                })
+                .attr("text-anchor", "middle")
+                .style("font-size", 17)
+                .attr("stroke", "#000000")
+                .style("stroke-width", "1px")
+            svg
+                // d3.select(this.parentNode)
+                .append("tspan")
+                .attr('class', 'tempText')
+            svg
+                // d3.select(this.parentNode)
+                .append("text")
+                .attr('class', 'tempText')
+                .text(d.data.value)
+                .attr('transform', function (d) {
+                    return "translate(" + (d3.mouse(this)[0] - 100) + "," + d3.mouse(this)[1] + ")";
+                })
+                .attr("text-anchor", "middle")
+                .style("font-size", 17)
+                .attr("stroke", "#000000")
+                .style("stroke-width", "0.5px")
+
+
+
+        })
+        .on('mouseout', function (d, i) {
+            d3.select(this).transition()
+                .duration('50')
+                .attr('opacity', '1')
+            d3.selectAll(".tempText").remove()
+        })
+        ;
 
     force.on("tick", function () {
         // link.attr("x1", function (d) { return d.source.x; })
