@@ -1,5 +1,5 @@
 ﻿Field of study (Broad),Field of study (Narrow),Certificates 1,Certificates 2,Certificates 3,Certificates 4 ,Certificates & Diplomas 5-7,Bachelors degrees 7,Graduate certificates/diplomas 7,Honours & postgrad. cert/dips. 8,Masters 9,Doctorates 10,Total
-Natural and Physical Sciences: Total,,0,20,590,2605,1195,18860,460,2770,2360,2070,30470
+Natural & Physical Sciences: Total,,0,20,590,2605,1195,18860,460,2770,2360,2070,30470
 ,Mathematical Sciences,0,20,520,670,305,5405,180,890,605,185,8640
 ,Physics and Astronomy,0,0,35,450,10,965,5,330,70,140,1980
 ,Chemical Sciences,0,0,15,190,55,1675,35,410,100,280,2730
@@ -10,7 +10,7 @@ Information Technology: Total,,25,190,100,760,3610,10610,495,1780,3150,530,20705
 ,Computer Science,25,50,65,245,2295,8095,270,1265,1815,430,14285
 ,Information Systems,0,20,0,60,620,3185,195,390,925,95,5455
 ,Other Information Technology,0,125,35,535,1130,980,80,195,585,10,3620
-Engineering and Related Technologies: Total,,405,1895,7085,8970,3345,3740,255,9630,1725,1535,37615
+Engineering & Related Tech: Total,,405,1895,7085,8970,3345,3740,255,9630,1725,1535,37615
 ,"Manufacturing, Engineering and Technology",10,30,100,100,25,30,5,50,15,0,355
 ,Process and Resources Engineering,10,80,200,120,335,185,25,760,245,205,2120
 ,Automotive Engineering and Technology,290,1140,2885,825,130,35,0,0,0,0,5195
@@ -21,10 +21,10 @@ Engineering and Related Technologies: Total,,405,1895,7085,8970,3345,3740,255,96
 ,Aerospace Engineering and Technology,45,0,150,385,690,330,15,10,45,5,1545
 ,Maritime Engineering and Technology,0,0,240,670,230,5,0,10,0,0,1115
 ,Other Engineering and Related Technologies,5,50,25,10,520,885,20,5730,460,445,8085
-Architecture and Building: Total,,465,1480,3465,10165,4390,3725,120,540,965,135,24955
+Architecture & Building: Total,,465,1480,3465,10165,4390,3725,120,540,965,135,24955
 ,Architecture and Urban Environment,0,0,25,1310,820,2545,35,510,930,130,6250
 ,Building,465,1480,3440,8855,3925,1250,85,30,35,5,19160
-"Agriculture, Environmental and Related Studies: Total",,30,1825,6525,1590,630,2550,110,395,625,185,13925
+"Agri, Env & Related Studies: Total",,30,1825,6525,1590,630,2550,110,395,625,185,13925
 ,Agriculture,25,795,2180,620,310,1250,5,40,105,110,5345
 ,Horticulture and Viticulture,0,255,4005,525,135,200,40,20,30,5,5075
 ,Forestry Studies,5,180,210,110,25,150,0,25,10,15,680
@@ -47,7 +47,7 @@ Education: Total,,220,185,180,2960,2425,9590,2950,2160,2570,820,23715
 ,Teacher Education,0,60,180,2750,2335,6410,2760,1370,1430,125,17265
 ,Curriculum and Education Studies,0,0,0,140,95,3385,70,725,1045,650,6050
 ,Other Education,220,125,0,95,5,45,130,125,175,45,900
-Management and Commerce: Total,,120,2060,8330,10370,10755,27535,2120,2105,7575,825,69620
+Management & Commerce: Total,,120,2060,8330,10370,10755,27535,2120,2105,7575,825,69620
 ,Accountancy,5,0,20,750,270,6805,200,195,780,90,9035
 ,Business and Management,0,30,3350,5025,4820,15745,1685,1725,5560,360,37655
 ,Sales and Marketing,55,125,50,3910,865,5640,120,130,625,110,11500
@@ -55,7 +55,7 @@ Management and Commerce: Total,,120,2060,8330,10370,10755,27535,2120,2105,7575,8
 ,Office Studies,15,1570,3985,125,5,0,10,0,0,0,5620
 ,"Banking, Finance and Related Fields",0,250,570,5,3950,3710,120,80,625,120,9345
 ,Other Management and Commerce,0,30,20,55,555,2910,70,175,385,85,4260
-Society and Culture: Total,,14495,8410,14405,17110,11275,45055,2185,4010,4580,2090,112410
+Society & Culture: Total,,14495,8410,14405,17110,11275,45055,2185,4010,4580,2090,112410
 ,Political Science and Policy Studies,0,35,5,0,120,3725,80,295,865,180,5255
 ,Studies in Human Society,0,225,4720,2440,865,9320,160,380,755,455,19080
 ,Human Welfare Studies and Services,0,705,2080,6345,2065,3675,110,520,450,40,15560
@@ -74,7 +74,7 @@ Creative Arts: Total,,35,835,910,2100,3220,13840,205,2175,1165,465,24550
 ,Graphic and Design Studies,0,100,165,840,1100,4410,30,1185,305,45,8070
 ,Communication and Media Studies,0,35,120,305,660,5255,130,620,450,150,7685
 ,Other Creative Arts,0,0,35,365,295,375,5,25,140,55,1255
-"Food, Hospitality and Personal Services: Total",,110,2010,2275,3955,1010,185,5,10,5,0,8765
+"Food, Hospitality & Prsn. Serv.: Total",,110,2010,2275,3955,1010,185,5,10,5,0,8765
 ,Food and Hospitality,70,1180,1045,1675,430,185,5,10,5,0,4345
 ,Personal Services,40,835,1230,2280,580,0,0,0,0,0,4440
 Mixed Field Programmes: Total,,2745,3165,2230,2485,145,195,35,220,275,5,10830
