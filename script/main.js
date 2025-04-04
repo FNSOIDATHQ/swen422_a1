@@ -1,6 +1,6 @@
 //data importer
 
-CSVreader("/dataset/section1.csv").then(function (data) {
+CSVreader("./dataset/section1.csv").then(function (data) {
     //parser
     var dataFoS = [];
     var dataTotal = [];
