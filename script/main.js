@@ -3,7 +3,7 @@
 CSVreader("/dataset/section1.csv").then(function (data) {
     //parser
     var dataFoS = [];
-    var dataTotal=[];
+    var dataTotal = [];
     var dataNumOnly = JSON.parse(JSON.stringify(data));
     for (var i in data) {
         for (var j in data[i]) {
@@ -19,7 +19,7 @@ CSVreader("/dataset/section1.csv").then(function (data) {
             }
             else {
                 if (j == "Field of study (Broad)" && data[i][j] != "" && data[i][j] != "Total") {
-                    console.log("find a field")
+                    // console.log("find a field")
                     dataFoS.push(data[i][j].substring(0, data[i][j].length - 7))
                 }
 
@@ -32,6 +32,7 @@ CSVreader("/dataset/section1.csv").then(function (data) {
         height = 1200,
         baseRadius = 100;
 
+    var k = 0;
     for (var i in dataNumOnly) {
         // console.log(dataNumOnly[i])
         if (data[i]["Field of study (Broad)"] && data[i]["Field of study (Broad)"] != "Total") {
@@ -39,8 +40,14 @@ CSVreader("/dataset/section1.csv").then(function (data) {
             var precent = data[i]["Total"] / 385050 * 12;
             dataTotal.push(data[i]["Total"]);
             for (var j in dataNumOnly[i]) {
-                dataNumOnly[i][j].radius = precent * baseRadius + 20
+                dataNumOnly[i][j].radius = precent * baseRadius + 20;
+                // console.log(dataFoS[k])
+                dataNumOnly[i][j].mainNameSize = (1 / dataFoS[k].length * 70) +
+                    Math.sqrt(dataNumOnly[i][0].radius) * 0.5;
+                dataNumOnly[i][j].mainNumSize = Math.sqrt(dataNumOnly[i][0].radius) * 1.25;
+                dataNumOnly[i][j].mainNumTransform = Math.sqrt(dataNumOnly[i][0].radius) * 1.75;
             }
+            k++;
         }
         else {
             delete dataNumOnly[i]
@@ -65,23 +72,20 @@ CSVreader("/dataset/section1.csv").then(function (data) {
         .outerRadius(function (d) { return Math.sqrt(d.data.radius) * 5.75; })
         .innerRadius(function (d) { return Math.sqrt(d.data.radius) * 8.25; });
 
+    var arcLarge = d3.svg.arc()
+        .outerRadius(240)
+        .innerRadius(300);
+
     var svg = d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height);
 
     var force = d3.layout.force()
         .charge(-2600)
-        // .linkDistance(4 * baseRadius)
         .size([width, height]);
 
     force.nodes(dataNumOnly)
-        // .links(graph.links)
         .start();
-
-    // var link = svg.selectAll(".link")
-    //     .data(graph.links)
-    //     .enter().append("line")
-    //     .attr("class", "link");
 
     var node = svg.selectAll(".node")
         .data(dataNumOnly)
@@ -114,52 +118,36 @@ CSVreader("/dataset/section1.csv").then(function (data) {
         .attr('opacity', '1')
         ;
 
-    node.append("text")
+    var mainName = node.append("text")
         .text(function (d, i) {
             return dataFoS[i];
         })
+        .attr('class', 'mainName')
         .attr("text-anchor", "middle")
         .style("font-size", function (d, i) {
-            return (1 / dataFoS[i].length * 70) + Math.sqrt(dataNumOnly[i][0].radius) * 0.5;
+            return dataNumOnly[i][0].mainNameSize;
         })
         .attr("stroke", "#000000")
         .style("stroke-width", "0.2px")
 
     node.append("tspan")
 
-    node.append("text")
+    var mainNum = node.append("text")
         .text(function (d, i) {
             return dataTotal[i];
         })
+        .attr('class', 'mainNum')
         .attr("text-anchor", "middle")
         .style("font-size", function (d, i) {
-            return Math.sqrt(dataNumOnly[i][0].radius) * 1.25;
+            return dataNumOnly[i][0].mainNameSize;
         })
         .attr("stroke", "#000000")
         .style("stroke-width", "0.2px")
-        .attr('transform', function (d,i) {
-            return "translate(0," + (Math.sqrt(dataNumOnly[i][0].radius)*1.75) + ")";
+        .attr('transform', function (d, i) {
+            return "translate(0," + dataNumOnly[i][0].mainNumTransform + ")";
         })
 
-    // var labels = node.selectAll("label")
-    //     .data(function (d, i) {
-    //         // console.log("set data")
-    //         return pie(d);
-    //     })
-    //     .enter()
-    //     .append('text')
-    //     .text(function (d) {
-    //         // console.log(d.data.key)
-    //         return d.data.key;
-    //     })
-    //     .attr("transform", function (d) {
-    //         return "translate(" + arc.centroid(d) + ")";
-    //     })
-    //     .attr("text-anchor", "middle")
-    //     .style("font-size", 17)
-    //     .attr('opacity', '0')
-    //     .style("user-select", "none")
-
+    var ZoomStatus = false;
     donuts
         .on("mouseover", function (d, i) {
             var donut = d3.select(this);
@@ -200,18 +188,44 @@ CSVreader("/dataset/section1.csv").then(function (data) {
 
         })
         .on('mouseout', function (d, i) {
-            d3.select(this).transition()
-                .duration('50')
+            d3.select(this.parentNode).selectAll("path").transition()
+                .duration('500')
                 .attr('opacity', '1')
             d3.selectAll(".tempText").remove()
+        })
+        .on('dblclick', function (d, i) {
+            if (ZoomStatus == false) {
+                d3.select(this.parentNode).selectAll("path").transition("zoomIn")
+                    .duration('500')
+                    .attr("d", arcLarge)
+                d3.select(this.parentNode).selectAll(".mainName").style("font-size", 30)
+                d3.select(this.parentNode).selectAll(".mainNum")
+                    .style("font-size", 35)
+                    .attr('transform', function (d, i) {
+                        return "translate(0," + 50 + ")";
+                    });
+                this.parentNode.parentNode.appendChild(this.parentNode)
+                ZoomStatus = true;
+            }
+            else {
+                d3.select(this.parentNode).selectAll("path").transition("zoomOut")
+                    .duration('500')
+                    .attr("d", arc)
+                mainName.style("font-size", function (d, i) {
+                    return dataNumOnly[i][0].mainNameSize;
+                })
+                mainNum.style("font-size", function (d, i) {
+                    return dataNumOnly[i][0].mainNumSize;
+                }).attr('transform', function (d, i) {
+                    return "translate(0," + dataNumOnly[i][0].mainNumTransform + ")";
+                });
+                ZoomStatus = false;
+            }
+
         })
         ;
 
     force.on("tick", function () {
-        // link.attr("x1", function (d) { return d.source.x; })
-        //     .attr("y1", function (d) { return d.source.y; })
-        //     .attr("x2", function (d) { return d.target.x; })
-        //     .attr("y2", function (d) { return d.target.y; });
 
         node.attr("x", function (d) { return d.x; })
             .attr("y", function (d) { return d.y; })
