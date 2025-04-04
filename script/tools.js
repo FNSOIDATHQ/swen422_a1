@@ -66,6 +66,14 @@ function sortNR(a, b) {
     return a[1] - b[1];
 }
 
+function sortValueN(a, b) {
+    return b.value - a.value;
+}
+
+function sortValueNR(a, b) {
+    return a.value - b.value;
+}
+
 function CSVreader(path) {
     var k = new Promise(function (resolve, reject) {
         d3.csv(path, function (error, data) {

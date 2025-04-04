@@ -1,6 +1,28 @@
-//data importer
+var needSort = false;
+const sortCheckBox = document.querySelector("#sortDonut");
 
-CSVreader("./dataset/section1.csv").then(function (data) {
+sortCheckBox.addEventListener("change", () => {
+    if (sortCheckBox.checked) {
+        needSort = true;
+        d3.select("svg").remove();
+        drawChart(dataLoaded);
+
+    } else {
+        needSort = false;
+        d3.select("svg").remove();
+        drawChart(dataLoaded);
+    }
+});
+
+
+var dataLoaded;
+//data importer
+var test = CSVreader("./dataset/section1.csv").then(function (data) {
+    dataLoaded=data;
+    drawChart(dataLoaded);
+});
+
+function drawChart(data) {
     //parser
     var dataFoS = [];
     var dataTotal = [];
@@ -58,7 +80,22 @@ CSVreader("./dataset/section1.csv").then(function (data) {
     dataNumOnly = dataNumOnly.filter((item) => {
         return item !== null && typeof item !== "undefined" && item !== "";
     });
-    console.log(dataTotal);
+
+    var dataNumOnlySorted = JSON.parse(JSON.stringify(dataNumOnly));
+    var dataNumOnlyUnSort = JSON.parse(JSON.stringify(dataNumOnly));
+    for (var i in dataNumOnlySorted) {
+        dataNumOnlySorted[i].sort(sortValueN);
+    }
+
+    if (needSort == true) {
+        dataNumOnly = dataNumOnlySorted;
+    }
+    else {
+        dataNumOnly = dataNumOnlyUnSort;
+    }
+
+
+    // console.log(dataTotal);
     // console.log(dataNumOnly);
 
 
@@ -231,5 +268,4 @@ CSVreader("./dataset/section1.csv").then(function (data) {
             .attr("y", function (d) { return d.y; })
             .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")" });
     });
-});
-
+}
