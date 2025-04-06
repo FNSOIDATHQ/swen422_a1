@@ -1,3 +1,6 @@
+//0=per degree 1=per field of study
+var datasetType=0;
+
 var needSort = false;
 const sortCheckBox = document.querySelector("#sortDonut");
 
@@ -50,7 +53,7 @@ function drawChart(data) {
         }
     }
 
-    var width = 1300,
+    var width = window.innerWidth*0.98,
         height = 1200,
         baseRadius = 100;
 
@@ -115,7 +118,8 @@ function drawChart(data) {
 
     var svg = d3.select("body").append("svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .attr("class","svgMain");
 
     var force = d3.layout.force()
         .charge(-2600)
