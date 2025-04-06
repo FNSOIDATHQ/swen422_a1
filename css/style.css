@@ -3,6 +3,7 @@ body{
 }
 
 .bg{
+    /* background-color: #c9c9c9c2; */
     background-color: rgba(179, 181, 182, 0.8);
     backdrop-filter:blur(2px);
     -webkit-backdrop-filter:blur(2px);

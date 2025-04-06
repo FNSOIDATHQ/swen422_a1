@@ -17,7 +17,7 @@ sortCheckBox.addEventListener("change", () => {
     }
 });
 
-
+var zoomedChart;
 var dataLoaded;
 //data importer
 var test = CSVreader("./dataset/section1.csv").then(function (data) {
@@ -117,8 +117,8 @@ function drawChart(data) {
         .innerRadius(300);
 
     var arcLabel = d3.svg.arc()
-        .innerRadius(360)
-        .outerRadius(360)
+        .innerRadius(390)
+        .outerRadius(390)
 
     var svg = d3.select("body").append("svg")
         .attr("width", width)
@@ -199,6 +199,19 @@ function drawChart(data) {
             donut.transition()
                 .duration('50')
                 .attr('opacity', '0.5')
+
+            svg
+                .append('rect')
+                .attr('x', -145)
+                .attr('y', -30)
+                .attr('width', 290)
+                .attr('height', 60)
+                .attr('stroke', '#1f1d1d8c')
+                .attr('fill', '#9ab8cc8c')
+                .attr('transform', function (d) {
+                    return "translate(" + (d3.mouse(this)[0] - 180) + "," + d3.mouse(this)[1] + ")";
+                })
+                .attr("class", "tempText");
             svg
                 // d3.select(this.parentNode)
                 .append("text")
@@ -206,7 +219,7 @@ function drawChart(data) {
                 .attr('class', 'tempText')
                 .text(d.data.key)
                 .attr('transform', function (d) {
-                    return "translate(" + (d3.mouse(this)[0] - 100) + "," + (d3.mouse(this)[1] + 20) + ")";
+                    return "translate(" + (d3.mouse(this)[0] - 180) + "," + (d3.mouse(this)[1] + 20) + ")";
                 })
                 .attr("text-anchor", "middle")
                 .style("font-size", 17)
@@ -222,12 +235,13 @@ function drawChart(data) {
                 .attr('class', 'tempText')
                 .text(d.data.value)
                 .attr('transform', function (d) {
-                    return "translate(" + (d3.mouse(this)[0] - 100) + "," + d3.mouse(this)[1] + ")";
+                    return "translate(" + (d3.mouse(this)[0] - 180) + "," + d3.mouse(this)[1] + ")";
                 })
                 .attr("text-anchor", "middle")
                 .style("font-size", 17)
                 .attr("stroke", "#000000")
                 .style("stroke-width", "0.5px")
+
 
 
 
@@ -250,7 +264,20 @@ function drawChart(data) {
                         return "translate(0," + 50 + ")";
                     });
 
+                d3.select(this.parentNode)
+                    .append('rect')
+                    .attr('x', -700)
+                    .attr('y', -500)
+                    .attr('width', 1400)
+                    .attr('height', 1000)
+                    .attr('fill', '#c9c9c9e1')
+                    .attr("class", "bk");
 
+                this.parentNode.insertBefore(d3.select(".bk").node(), this.parentNode.firstChild);
+
+                // var cumGain=0;
+                var lastY = 74256;
+                var lastSide;
                 d3.select(this.parentNode)
                     .selectAll('allPolylines')
                     .data(function (d, i) {
@@ -262,16 +289,36 @@ function drawChart(data) {
                     .style("fill", "none")
                     .attr("stroke-width", "2px")
                     .attr('points', function (d) {
-                        console.log(d)
-                        const posA = arcLarge.centroid(d) // line insertion in the slice
-                        const posB = arcLabel.centroid(d) // line break: we use the other arc generator that has been built only for that
-                        const posC = arcLabel.centroid(d); // Label position = almost the same as posB
+
+                        posA = arcLarge.centroid(d) // line insertion in the slice
+                        posB = arcLabel.centroid(d) // line break: we use the other arc generator that has been built only for that
+                        posC = arcLabel.centroid(d); // Label position = almost the same as posB
+
+                        const angleRange = d.endAngle - d.startAngle;
                         const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2 // we need the angle to see if the X position will be at the extreme right or extreme left
-                        posC[0] = 360 * 0.95 * (midangle < Math.PI ? 1 : -1); // multiply by 1 or -1 to put it on the right or on the left
+                        const side = midangle < Math.PI ? 1 : -1;
+                        posC[0] = 400 * 0.95 * side; // multiply by 1 or -1 to put it on the right or on the left
+                        // separate=(angleRange < 0.6 ? -1*(1/angleRange) : 0)+cumGain;
+                        // if(separate>0){
+                        //     cumGain+=-50;
+                        // }
+                        separate = posB[1];
+                        if (lastY != 74256) {
+                            if (Math.abs(posB[1] - lastY) < 16 || ((posB[1] - lastY) * side < 0 && side * lastSide > 0)) {
+                                separate = lastY + 15 * side;
+                            }
+                        }
+                        posC[1] = separate;
+                        posB[1] = separate;
+                        // console.log(posB[1]-lastY)
+                        lastY = posB[1];
+                        lastSide = side;
                         return [posA, posB, posC]
                     })
                     .attr('class', 'largeLabels')
 
+                // cumGain=0;
+                lastY = 74256;
                 d3.select(this.parentNode)
                     .selectAll('allLabels')
                     .data(function (d, i) {
@@ -282,8 +329,23 @@ function drawChart(data) {
                     .text(d => d.data.key)
                     .attr('transform', function (d) {
                         const pos = arcLabel.centroid(d);
+                        const angleRange = d.endAngle - d.startAngle;
                         const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
-                        pos[0] = 360 * 0.99 * (midangle < Math.PI ? 1 : -1);
+                        const side = midangle < Math.PI ? 1 : -1;
+                        pos[0] = 400 * 0.99 * side;
+                        // separate=(angleRange < 0.6 ? -1*(1/angleRange) : 0)+cumGain;
+                        // if(separate>0){
+                        //     cumGain+=-50;
+                        // }
+                        separate = pos[1];
+                        if (lastY != 74256) {
+                            if (Math.abs(pos[1] - lastY) < 16 || ((pos[1] - lastY) * side < 0 && side * lastSide > 0)) {
+                                separate = lastY + 15 * side;
+                            }
+                        }
+                        pos[1] = separate;
+                        lastY = pos[1];
+                        lastSide = side;
                         return `translate(${pos})`;
                     })
                     .style('text-anchor', function (d) {
@@ -294,25 +356,33 @@ function drawChart(data) {
 
 
                 this.parentNode.parentNode.appendChild(this.parentNode)
+                zoomedChart = this.parentNode;
                 ZoomStatus = true;
+                // console.log("end")
             }
             else {
-                d3.select(this.parentNode).selectAll("path").transition("zoomOut")
-                    .duration('500')
-                    .attr("d", arc)
-                mainName.style("font-size", function (d, i) {
-                    return dataNumOnly[i][0].mainNameSize;
-                })
-                mainNum.style("font-size", function (d, i) {
-                    return dataNumOnly[i][0].mainNumSize;
-                }).attr('transform', function (d, i) {
-                    return "translate(0," + dataNumOnly[i][0].mainNumTransform + ")";
-                });
+                if (zoomedChart == this.parentNode) {
+                    d3.select(this.parentNode).selectAll("path").transition("zoomOut")
+                        .duration('500')
+                        .attr("d", arc)
+                    mainName.style("font-size", function (d, i) {
+                        return dataNumOnly[i][0].mainNameSize;
+                    })
+                    mainNum.style("font-size", function (d, i) {
+                        return dataNumOnly[i][0].mainNumSize;
+                    }).attr('transform', function (d, i) {
+                        return "translate(0," + dataNumOnly[i][0].mainNumTransform + ")";
+                    });
 
-                d3.select(this.parentNode)
-                    .selectAll('.largeLabels')
-                    .remove()
-                ZoomStatus = false;
+                    d3.select(this.parentNode)
+                        .selectAll('.largeLabels')
+                        .remove()
+                    d3.select(this.parentNode)
+                        .selectAll('.bk')
+                        .remove()
+                    ZoomStatus = false;
+                }
+
             }
 
         })
