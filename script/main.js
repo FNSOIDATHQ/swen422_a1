@@ -1,5 +1,5 @@
 //0=per degree 1=per field of study
-var datasetType=0;
+var datasetType = 0;
 
 var needSort = false;
 const sortCheckBox = document.querySelector("#sortDonut");
@@ -21,7 +21,7 @@ sortCheckBox.addEventListener("change", () => {
 var dataLoaded;
 //data importer
 var test = CSVreader("./dataset/section1.csv").then(function (data) {
-    dataLoaded=data;
+    dataLoaded = data;
     drawChart(dataLoaded);
 });
 
@@ -53,7 +53,7 @@ function drawChart(data) {
         }
     }
 
-    var width = window.innerWidth*0.98,
+    var width = window.innerWidth * 0.98,
         height = 1200,
         baseRadius = 100;
 
@@ -116,13 +116,17 @@ function drawChart(data) {
         .outerRadius(240)
         .innerRadius(300);
 
+    var arcLabel = d3.svg.arc()
+        .innerRadius(360)
+        .outerRadius(360)
+
     var svg = d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height)
-        .attr("class","svgMain");
+        .attr("class", "svgMain");
 
     var force = d3.layout.force()
-        .charge(function(d){console.log(d[0].radius);return -d[0].radius*16;})
+        .charge(function (d) { return -d[0].radius * 16; })
         .size([width, height]);
 
     force.nodes(dataNumOnly)
@@ -245,6 +249,50 @@ function drawChart(data) {
                     .attr('transform', function (d, i) {
                         return "translate(0," + 50 + ")";
                     });
+
+
+                d3.select(this.parentNode)
+                    .selectAll('allPolylines')
+                    .data(function (d, i) {
+                        return pie(d);
+                    })
+                    .enter()
+                    .append('polyline')
+                    .attr("stroke", "gray")
+                    .style("fill", "none")
+                    .attr("stroke-width", "2px")
+                    .attr('points', function (d) {
+                        console.log(d)
+                        const posA = arcLarge.centroid(d) // line insertion in the slice
+                        const posB = arcLabel.centroid(d) // line break: we use the other arc generator that has been built only for that
+                        const posC = arcLabel.centroid(d); // Label position = almost the same as posB
+                        const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2 // we need the angle to see if the X position will be at the extreme right or extreme left
+                        posC[0] = 360 * 0.95 * (midangle < Math.PI ? 1 : -1); // multiply by 1 or -1 to put it on the right or on the left
+                        return [posA, posB, posC]
+                    })
+                    .attr('class', 'largeLabels')
+
+                d3.select(this.parentNode)
+                    .selectAll('allLabels')
+                    .data(function (d, i) {
+                        return pie(d);
+                    })
+                    .enter()
+                    .append('text')
+                    .text(d => d.data.key)
+                    .attr('transform', function (d) {
+                        const pos = arcLabel.centroid(d);
+                        const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                        pos[0] = 360 * 0.99 * (midangle < Math.PI ? 1 : -1);
+                        return `translate(${pos})`;
+                    })
+                    .style('text-anchor', function (d) {
+                        const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                        return (midangle < Math.PI ? 'start' : 'end')
+                    })
+                    .attr('class', 'largeLabels')
+
+
                 this.parentNode.parentNode.appendChild(this.parentNode)
                 ZoomStatus = true;
             }
@@ -260,6 +308,10 @@ function drawChart(data) {
                 }).attr('transform', function (d, i) {
                     return "translate(0," + dataNumOnly[i][0].mainNumTransform + ")";
                 });
+
+                d3.select(this.parentNode)
+                    .selectAll('.largeLabels')
+                    .remove()
                 ZoomStatus = false;
             }
 
