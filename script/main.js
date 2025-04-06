@@ -122,7 +122,7 @@ function drawChart(data) {
         .attr("class","svgMain");
 
     var force = d3.layout.force()
-        .charge(-2600)
+        .charge(function(d){console.log(d[0].radius);return -2600*(d[0].radius*0.006);})
         .size([width, height]);
 
     force.nodes(dataNumOnly)
