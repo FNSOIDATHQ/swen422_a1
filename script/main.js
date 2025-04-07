@@ -17,6 +17,23 @@ sortCheckBox.addEventListener("change", () => {
     }
 });
 
+const datasetSelect = document.querySelector("#type");
+datasetSelect.addEventListener("change", () => {
+    var v = datasetSelect.options[datasetSelect.selectedIndex].value;
+
+    if (v == "FoS") {
+        datasetType = 1;
+        d3.select("svg").remove();
+        drawChart(dataLoaded);
+    }
+    else if (v == "QT") {
+        datasetType = 0;
+        d3.select("svg").remove();
+        drawChart(dataLoaded);
+    }
+});
+
+
 var zoomedChart;
 var dataLoaded;
 //data importer
@@ -30,40 +47,96 @@ function drawChart(data) {
     var dataFoS = [];
     var dataTotal = [];
     var dataNumOnly = JSON.parse(JSON.stringify(data));
-    for (var i in data) {
-        for (var j in data[i]) {
-            if (j != "Field of study (Broad)" && j != "Field of study (Narrow)") {
-                data[i][j] = +data[i][j];
 
-                if (j == "Total" || j == "date" || j == "close") {
-                    delete dataNumOnly[i][j]
+
+    if (datasetType == 0) {
+        for (var i in data) {
+            for (var j in data[i]) {
+                if (j != "Field of study (Broad)" && j != "Field of study (Narrow)") {
+                    data[i][j] = +data[i][j];
+
+                    if (j == "Total" || j == "date" || j == "close") {
+                        delete dataNumOnly[i][j]
+                    }
+                    else {
+                        dataNumOnly[i][j] = +dataNumOnly[i][j];
+                    }
                 }
                 else {
-                    dataNumOnly[i][j] = +dataNumOnly[i][j];
-                }
-            }
-            else {
-                if (j == "Field of study (Broad)" && data[i][j] != "" && data[i][j] != "Total") {
-                    // console.log("find a field")
-                    dataFoS.push(data[i][j].substring(0, data[i][j].length - 7))
-                }
+                    if (j == "Field of study (Broad)" && data[i][j] != "" && data[i][j] != "Total") {
+                        // console.log("find a field")
+                        dataFoS.push(data[i][j].substring(0, data[i][j].length - 7))
+                    }
 
-                delete dataNumOnly[i][j]
+                    delete dataNumOnly[i][j]
+                }
             }
         }
     }
+    else if (datasetType == 1) {
+        dataNumOnly = [];
+        var FoSIndex = -1;
+        for (var i in data) {
+            for (var j in data[i]) {
+                if (j != "Field of study (Broad)" && j != "Field of study (Narrow)") {
+                    data[i][j] = +data[i][j];
+
+                    if (j == "Total" && data[i]["Field of study (Narrow)"] != "") {
+                        dataNumOnly[FoSIndex][data[i]["Field of study (Narrow)"]] = +data[i][j];
+                        // console.log(dataNumOnly[FoSIndex]);
+                    }
+                }
+                else {
+                    if (j == "Field of study (Broad)" && data[i][j] != "" && data[i][j] != "Total") {
+                        // console.log("find a field")
+                        dataFoS.push(data[i][j].substring(0, data[i][j].length - 7));
+                        dataTotal.push(data[i]["Total"]);
+                        FoSIndex++;
+                        dataNumOnly[FoSIndex] = []
+                    }
+                }
+            }
+        }
+    }
+
+
 
     var width = window.innerWidth * 0.98,
         height = 1200,
         baseRadius = 100;
 
-    var k = 0;
-    for (var i in dataNumOnly) {
-        // console.log(dataNumOnly[i])
-        if (data[i]["Field of study (Broad)"] && data[i]["Field of study (Broad)"] != "Total") {
+    if (datasetType == 0) {
+        var k = 0;
+        for (var i in dataNumOnly) {
+            // console.log(dataNumOnly[i])
+            if (data[i]["Field of study (Broad)"] && data[i]["Field of study (Broad)"] != "Total") {
+                dataNumOnly[i] = d3.entries(dataNumOnly[i])
+                var precent = data[i]["Total"] / 385050 * 12;
+                dataTotal.push(data[i]["Total"]);
+                for (var j in dataNumOnly[i]) {
+                    dataNumOnly[i][j].radius = precent * baseRadius + 20;
+                    // console.log(dataFoS[k])
+                    dataNumOnly[i][j].mainNameSize = (1 / dataFoS[k].length * 70) +
+                        Math.sqrt(dataNumOnly[i][0].radius) * 0.5;
+                    dataNumOnly[i][j].mainNumSize = Math.sqrt(dataNumOnly[i][0].radius) * 1.25;
+                    dataNumOnly[i][j].mainNumTransform = Math.sqrt(dataNumOnly[i][0].radius) * 1.75;
+                }
+                k++;
+            }
+            else {
+                delete dataNumOnly[i]
+            }
+
+
+        }
+    }
+    else if (datasetType == 1) {
+        var k = 0;
+        for (var i in dataNumOnly) {
+            // console.log(dataNumOnly[i])
             dataNumOnly[i] = d3.entries(dataNumOnly[i])
-            var precent = data[i]["Total"] / 385050 * 12;
-            dataTotal.push(data[i]["Total"]);
+            var precent = dataTotal[k] / 385050 * 12;
+            
             for (var j in dataNumOnly[i]) {
                 dataNumOnly[i][j].radius = precent * baseRadius + 20;
                 // console.log(dataFoS[k])
@@ -73,13 +146,15 @@ function drawChart(data) {
                 dataNumOnly[i][j].mainNumTransform = Math.sqrt(dataNumOnly[i][0].radius) * 1.75;
             }
             k++;
-        }
-        else {
-            delete dataNumOnly[i]
-        }
 
 
+        }
     }
+
+    // console.log(dataNumOnly);
+
+
+
     dataNumOnly = dataNumOnly.filter((item) => {
         return item !== null && typeof item !== "undefined" && item !== "";
     });
