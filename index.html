@@ -10,14 +10,22 @@
   <div class="bg">
     <div class="title">
       <p style="font-size:39px;">Students by Field of Study</p>
-      <label for="sortDonut">Sort the donuts</label>
-      <input type="checkbox" id="sortDonut" name="sort" value="needSort" />
-      <br>
+
+      <div style="padding-bottom: 20px;">
+        <label id="chkBoxLabel">
+          <input type="checkbox" id="sortDonut" name="sort" value="needSort" />
+          Sort the donuts
+          <span class="chkBoxUI"></span>
+        </label>
+      </div>
+
+
       <label for="type">Dataset type</label>
       <select name="datasetSelect" id="type">
         <option value="QT">Qualification Type</option>
         <option value="FoS">Field of Study</option>
       </select>
+      <p style="font-size: 20px; color: rgb(60, 60, 60);">Double click the donuts to zoom in/out</p>
     </div>
 
     <div id="testDonut"></div>
