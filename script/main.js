@@ -341,9 +341,9 @@ function drawChart(data) {
 
                 d3.select(this.parentNode)
                     .append('rect')
-                    .attr('x', -700)
+                    .attr('x', -900)
                     .attr('y', -500)
-                    .attr('width', 1400)
+                    .attr('width', 1800)
                     .attr('height', 1000)
                     .attr('fill', '#c9c9c9e1')
                     .attr("class", "bk");
