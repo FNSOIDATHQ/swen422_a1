@@ -136,7 +136,7 @@ function drawChart(data) {
             // console.log(dataNumOnly[i])
             dataNumOnly[i] = d3.entries(dataNumOnly[i])
             var precent = dataTotal[k] / 385050 * 12;
-            
+
             for (var j in dataNumOnly[i]) {
                 dataNumOnly[i][j].radius = precent * baseRadius + 20;
                 // console.log(dataFoS[k])
@@ -275,16 +275,18 @@ function drawChart(data) {
                 .duration('50')
                 .attr('opacity', '0.5')
 
+            var blockLength = d.data.key.length * 10;
+            blockLength=Math.max(blockLength,80);
             svg
                 .append('rect')
-                .attr('x', -145)
+                .attr('x', -blockLength/2)
                 .attr('y', -30)
-                .attr('width', 290)
+                .attr('width', blockLength)
                 .attr('height', 60)
                 .attr('stroke', '#1f1d1d8c')
                 .attr('fill', '#9ab8cc8c')
                 .attr('transform', function (d) {
-                    return "translate(" + (d3.mouse(this)[0] - 180) + "," + d3.mouse(this)[1] + ")";
+                    return "translate(" + (d3.mouse(this)[0] - blockLength*0.6) + "," + d3.mouse(this)[1] + ")";
                 })
                 .attr("class", "tempText");
             svg
@@ -294,7 +296,7 @@ function drawChart(data) {
                 .attr('class', 'tempText')
                 .text(d.data.key)
                 .attr('transform', function (d) {
-                    return "translate(" + (d3.mouse(this)[0] - 180) + "," + (d3.mouse(this)[1] + 20) + ")";
+                    return "translate(" + (d3.mouse(this)[0] - blockLength*0.6) + "," + (d3.mouse(this)[1] + 20) + ")";
                 })
                 .attr("text-anchor", "middle")
                 .style("font-size", 17)
@@ -310,7 +312,7 @@ function drawChart(data) {
                 .attr('class', 'tempText')
                 .text(d.data.value)
                 .attr('transform', function (d) {
-                    return "translate(" + (d3.mouse(this)[0] - 180) + "," + d3.mouse(this)[1] + ")";
+                    return "translate(" + (d3.mouse(this)[0] - blockLength*0.6) + "," + d3.mouse(this)[1] + ")";
                 })
                 .attr("text-anchor", "middle")
                 .style("font-size", 17)
