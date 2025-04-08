@@ -1,4 +1,10 @@
-//load color array from sequential color
+/**
+ * 
+ * @param {*} color sequential color
+ * @param {*} n sampling size
+ * @param {*} start color sampling start position
+ * @usage load color array from sequential color
+ */
 function rampColor(color, n, start = 0) {
     var out = new Array();
 

@@ -8,7 +8,6 @@ var zoomedChart;
 //false=zoom out true=zoom in
 var ZoomStatus = false;
 
-
 //UI actions
 const sortCheckBox = document.querySelector("#sortDonut");
 sortCheckBox.addEventListener("change", () => {
@@ -40,15 +39,12 @@ datasetSelect.addEventListener("change", () => {
     }
 });
 
-
-
 //data importer
 var dataLoaded;
 CSVreader("./dataset/section1.csv").then(function (data) {
     dataLoaded = data;
     drawChart(dataLoaded);
 });
-
 
 //main drawer function
 function drawChart(data) {
