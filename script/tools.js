@@ -1,3 +1,4 @@
+//load color array from sequential color
 function rampColor(color, n, start = 0) {
     var out = new Array();
 
@@ -58,6 +59,7 @@ function randomColorSequential() {
     }
 }
 
+//N=number R=reserve
 function sortN(a, b) {
     return b[1] - a[1];
 }
@@ -74,13 +76,10 @@ function sortValueNR(a, b) {
     return a.value - b.value;
 }
 
+//we need this to separate data loading process
 function CSVreader(path) {
     var k = new Promise(function (resolve, reject) {
         d3.csv(path, function (error, data) {
-            data.forEach(function (d) {
-                d.date = (d.date);
-                d.close = +d.close;
-            });
             resolve(data)
         })
     });
